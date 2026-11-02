@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-/** Matches the 1s background transition in HeroSlider.module.css. */
-const TRANSITION_MS = 1000;
+/** Whole slide change: 0.5s delay + 1s background transition (see HeroSlider.module.css). */
+const TRANSITION_MS = 1500;
 
 function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
