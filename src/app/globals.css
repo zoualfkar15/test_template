@@ -1,0 +1,72 @@
+/* Design tokens shared by every component. Component styles live next to
+   each component in *.module.css files. */
+:root {
+  --color-ink: #1a1420;
+  --color-ink-soft: #5c5362;
+  --color-paper: #fbf8f5;
+  --color-paper-alt: #f2ece6;
+  --color-night: #161018;
+  --color-night-soft: #241a27;
+  --color-line: rgba(26, 20, 32, 0.12);
+  --color-accent: #d0593d;
+  --color-accent-ink: #ffffff;
+
+  --font-sans: var(--font-inter-tight), "Avenir Next", "Segoe UI", sans-serif;
+
+  --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+  --radius: 18px;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --content-width: 1180px;
+  --topbar-height: 64px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a,
+button {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

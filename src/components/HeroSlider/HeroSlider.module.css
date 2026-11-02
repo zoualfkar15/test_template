@@ -1,0 +1,535 @@
+/* ---------- Stage ---------- */
+
+.stage {
+  /* Pointer position, updated from HeroSlider.tsx. */
+  --px: 0;
+  --py: 0;
+
+  /* Easing curves of the original slider (GSAP power2.inOut and sine.inOut). */
+  --ease-power2: cubic-bezier(0.45, 0, 0.55, 1);
+  --ease-sine: cubic-bezier(0.37, 0, 0.63, 1);
+
+  position: relative;
+  height: calc(100dvh - var(--topbar-height));
+  min-height: 560px;
+  overflow: hidden;
+  background: var(--color-night);
+  color: #fff;
+  touch-action: pan-y;
+}
+
+/* ---------- Slide ---------- */
+
+/* The incoming slide (.active) is drawn over the outgoing one (.leaving)
+   while its background slides in. All other slides are hidden. */
+.slide {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+}
+
+.slide.active {
+  visibility: visible;
+  z-index: 2;
+}
+
+.slide.leaving {
+  visibility: visible;
+  z-index: 1;
+}
+
+/* ---------- Background photo ---------- */
+
+/* Layer 1: follows the pointer. */
+.background {
+  position: absolute;
+  inset: -3%;
+  transform: translate3d(calc(var(--px) * 22px), calc(var(--py) * 16px), 0);
+  transition: transform 0.7s ease-out;
+}
+
+/* Layer 2: "skew vertical" entrance — rises 10%, unskews and un-blurs over 1s. */
+.reveal {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.active .reveal {
+  animation: reveal-in 1s var(--ease-power2) both;
+}
+
+/* Layer 3: slow Ken Burns zoom from 120% to 100% over 10s. */
+.zoom {
+  position: absolute;
+  inset: 0;
+  scale: 1.2;
+}
+
+.zoom::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--tint);
+}
+
+/* Same animation on .leaving, so the outgoing photo keeps drifting
+   instead of snapping back while it is being covered. */
+.active .zoom,
+.leaving .zoom {
+  animation: ken-burns 10s linear 0.3s both;
+}
+
+.photo {
+  object-fit: cover;
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10%) skewY(-6deg);
+    filter: blur(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+@keyframes ken-burns {
+  from {
+    scale: 1.2;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+.veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    rgba(18, 10, 20, 0.28) 0%,
+    rgba(18, 10, 20, 0.02) 28%,
+    rgba(18, 10, 20, 0.18) 100%
+  );
+  pointer-events: none;
+}
+
+.stack {
+  position: relative;
+  z-index: 3;
+  width: min(920px, 100%);
+  height: 100%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 5.5rem 1.5rem 5rem;
+  text-align: center;
+}
+
+.kicker {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 16px rgba(20, 10, 18, 0.45);
+}
+
+.title {
+  max-width: 11ch;
+  font-size: clamp(3.4rem, 9vw, 7.4rem);
+  font-weight: 800;
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  text-shadow: 0 10px 30px rgba(20, 10, 18, 0.28);
+}
+
+.art {
+  width: min(100%, 680px);
+  height: clamp(200px, 34vh, 420px);
+  margin: 0.4rem 0 0.2rem;
+  transform: translate3d(
+    calc(var(--px) * var(--depth, 1) * 18px),
+    calc(var(--py) * var(--depth, 1) * 14px),
+    0
+  );
+  transition: transform 0.7s ease-out;
+}
+
+.art svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 18px 24px rgba(30, 12, 24, 0.22));
+}
+
+.lede {
+  max-width: 36rem;
+  margin-top: 0.35rem;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-weight: 500;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 2px 14px rgba(20, 10, 18, 0.4);
+}
+
+.more {
+  align-self: flex-end;
+  margin-top: 0.8rem;
+  padding: 0 0 0.12rem;
+  border: 0;
+  border-bottom: 2px solid #fff;
+  background: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.more:hover {
+  opacity: 0.75;
+}
+
+/* ---------- Entrance animation ---------- */
+
+.kicker,
+.title,
+.lede,
+.more {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+.art {
+  opacity: 0;
+  translate: 0 22px;
+}
+
+/* Text and artwork rise in over 1s, one after another. */
+.active .kicker,
+.active .title,
+.active .lede,
+.active .more {
+  animation: rise 1s var(--ease-sine) forwards;
+}
+
+.active .title {
+  animation-delay: 0.06s;
+}
+
+.active .art {
+  animation: rise-art 1s var(--ease-sine) 0.12s forwards;
+}
+
+/* Once it has risen, the artwork keeps zooming slowly to 115% over 8s. */
+.active .art svg,
+.leaving .art svg {
+  animation: art-zoom 8s linear 1s both;
+}
+
+.active .lede {
+  animation-delay: 0.18s;
+}
+
+.active .more {
+  animation-delay: 0.24s;
+}
+
+/* The outgoing slide's text fades away while it is covered. */
+.leaving .stack {
+  animation: fade-out 0.5s var(--ease-sine) forwards;
+}
+
+.leaving .kicker,
+.leaving .title,
+.leaving .art,
+.leaving .lede,
+.leaving .more {
+  opacity: 1;
+  transform: none;
+  translate: none;
+}
+
+@keyframes rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rise-art {
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes art-zoom {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 1.15;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* ---------- Controls ---------- */
+
+.chrome {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.chrome :where(a, button) {
+  pointer-events: auto;
+  border: 0;
+  background: transparent;
+  color: #fff;
+}
+
+.chrome :focus-visible {
+  outline-color: #fff;
+}
+
+.mark {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  font-size: 1.35rem;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.aboutLink {
+  position: absolute;
+  top: 1.55rem;
+  right: 1.5rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.aboutLink:hover,
+.social a:hover,
+.arrows button:hover {
+  opacity: 0.7;
+}
+
+.rail {
+  position: absolute;
+  top: 50%;
+  right: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transform: translateY(-50%);
+}
+
+.dot,
+.dotActive {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.45);
+  transition: height 0.3s var(--ease);
+}
+
+.dotActive {
+  height: 22px;
+  background: #fff;
+}
+
+.dock {
+  position: absolute;
+  right: 1.3rem;
+  bottom: 1.15rem;
+  left: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.social {
+  display: flex;
+  gap: 0.85rem;
+}
+
+.social a {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+.arrows {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.arrows button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+}
+
+.count {
+  min-width: 2.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+/* ---------- Autoplay progress bar ---------- */
+
+/* Vertical 3px bar on the right edge, filling from the top while a slide
+   is shown. Its animation doubles as the autoplay timer (see ProgressBar.tsx). */
+.progress {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  width: 3px;
+  pointer-events: none;
+}
+
+.progressFill {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  transform-origin: top;
+  animation: progress-fill var(--duration) linear forwards;
+}
+
+@keyframes progress-fill {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* ---------- About dialog ---------- */
+
+.dialog {
+  width: min(440px, calc(100vw - 2rem));
+  padding: 1.5rem 1.4rem 1.3rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--color-ink);
+}
+
+.dialog::backdrop {
+  background: rgba(16, 10, 20, 0.55);
+}
+
+.dialog h2 {
+  margin-bottom: 0.6rem;
+  font-size: 1.6rem;
+  letter-spacing: -0.04em;
+}
+
+.dialog p {
+  margin-bottom: 0.75rem;
+}
+
+.dialogNote {
+  color: var(--color-ink-soft);
+  font-size: 0.92rem;
+}
+
+.dialog form {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dialog button {
+  padding: 0.55rem 0.95rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: #fff;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 720px) {
+  .rail {
+    display: none;
+  }
+
+  .more {
+    align-self: center;
+  }
+
+  .title {
+    max-width: 12ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No bar animation means no autoplay: slides only change on request. */
+  .progress {
+    display: none;
+  }
+
+  .zoom {
+    scale: 1;
+  }
+
+  .slide .reveal,
+  .slide .zoom,
+  .slide .art svg {
+    animation: none;
+  }
+
+  .background,
+  .art,
+  .dot,
+  .dotActive {
+    transition: none;
+  }
+
+  .slide .kicker,
+  .slide .title,
+  .slide .art,
+  .slide .lede,
+  .slide .more {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    translate: none;
+  }
+}
