@@ -1,4 +1,5 @@
 import type { ArtName } from "@/components/HeroSlider/art";
+import { publicFile } from "@/lib/publicPath";
 
 export type Slide = {
   id: string;
@@ -26,7 +27,7 @@ export const slides: Slide[] = [
     kicker: "Drift",
     title: "into the weather",
     lede: "A pale road, a pink sky, and nowhere you need to be before the light changes.",
-    image: "/images/sky-clouds.jpg",
+    image: publicFile("/images/sky-clouds.jpg"),
     tint: "linear-gradient(180deg, rgba(48, 24, 40, 0.18), rgba(28, 18, 36, 0.12))",
     fallbackColor: "#c9a3b4",
     art: "clouds",
@@ -37,7 +38,7 @@ export const slides: Slide[] = [
     kicker: "Return",
     title: "past the horizon",
     lede: "The long way back still bends. Stay with the last warm edge of the day.",
-    image: "/images/horizon.jpg",
+    image: publicFile("/images/horizon.jpg"),
     tint: "linear-gradient(180deg, rgba(12, 28, 32, 0.2), rgba(8, 16, 18, 0.28))",
     fallbackColor: "#6d8f62",
     art: "horizon",
@@ -48,7 +49,7 @@ export const slides: Slide[] = [
     kicker: "2026",
     title: "a long blue mile",
     lede: "Leave the ground at the edge of the frame and let the horizon stay small.",
-    image: "/images/earth.jpg",
+    image: publicFile("/images/earth.jpg"),
     tint: "linear-gradient(180deg, rgba(4, 8, 20, 0.15), rgba(4, 8, 20, 0.35))",
     fallbackColor: "#0b1b33",
     art: "orbit",
@@ -59,7 +60,7 @@ export const slides: Slide[] = [
     kicker: "Signal",
     title: "under the beam",
     lede: "Something patient hangs over the field. You can wave, or you can just watch.",
-    image: "/images/night-sky.jpg",
+    image: publicFile("/images/night-sky.jpg"),
     tint: "linear-gradient(180deg, rgba(8, 10, 24, 0.2), rgba(8, 10, 20, 0.45))",
     fallbackColor: "#101426",
     art: "field",
